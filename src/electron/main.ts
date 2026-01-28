@@ -38,9 +38,7 @@ const createWindow = () => {
         mainWindow = null;
     });
 
-    // Hide window when minimized instead of closing
-    mainWindow.on('minimize', (event: any) => {
-        event.preventDefault();
+    mainWindow.on('minimize', () => {
         mainWindow?.hide();
     });
 

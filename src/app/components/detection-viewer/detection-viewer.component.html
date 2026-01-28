@@ -20,11 +20,23 @@
         </div>
         <div class="stat-row">
             <span class="label">People Detected:</span>
-            <span class="value">{{ stats.personDetections }}</span>
+            <span class="value">{{ stats.personsDetected }}</span>
+        </div>
+        <div class="stat-row" *ngIf="stats.animalsDetected && stats.animalsDetected.length > 0">
+            <span class="label">Animals:</span>
+            <span class="value animal">{{ stats.animalsDetected.join(', ') }}</span>
+        </div>
+        <div class="stat-row" *ngIf="stats.furnitureDetected && stats.furnitureDetected.length > 0">
+            <span class="label">Furniture:</span>
+            <span class="value">{{ stats.furnitureDetected.join(', ') }}</span>
         </div>
         <div class="stat-row">
-            <span class="label">Highest Confidence:</span>
-            <span class="value">{{ (stats.highestConfidence * 100).toFixed(1) }}%</span>
+            <span class="label">Avg Confidence:</span>
+            <span class="value">{{ (stats.averageConfidence * 100).toFixed(1) }}%</span>
+        </div>
+        <div class="stat-row">
+            <span class="label">High Confidence:</span>
+            <span class="value">{{ stats.detectionsByConfidence?.high || 0 }}</span>
         </div>
         <div class="stat-row">
             <span class="label">Frame Number:</span>

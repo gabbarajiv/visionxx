@@ -95,6 +95,11 @@
     font-family: 'Courier New', monospace;
 }
 
+.stat-row .value.animal {
+    color: #ff6600;
+    font-weight: 600;
+}
+
 .stat-row .value.running {
     animation: pulse 1s infinite;
 }

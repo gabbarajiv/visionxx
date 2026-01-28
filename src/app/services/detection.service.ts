@@ -72,6 +72,19 @@ export class DetectionService {
             throw new Error('Model not loaded. Call initializeModel() first.');
         }
 
+        // Validate video element is ready and has valid dimensions
+        if (!videoElement) {
+            throw new Error('Video element is null or undefined');
+        }
+
+        if (videoElement.videoWidth === 0 || videoElement.videoHeight === 0) {
+            throw new Error('Video element has invalid dimensions (width or height is 0)');
+        }
+
+        if (videoElement.readyState !== videoElement.HAVE_ENOUGH_DATA) {
+            throw new Error('Video element is not ready - invalid readyState');
+        }
+
         try {
             // Run COCO-SSD detection
             const predictions = await this.model.detect(videoElement);
@@ -97,10 +110,39 @@ export class DetectionService {
             return frame;
         } catch (error) {
             const errorMsg = error instanceof Error ? error.message : String(error);
-            console.error('Detection error:', errorMsg);
+            // Only log non-validation errors or first occurrence
+            if (!errorMsg.includes('Video element is not ready') || this.frameCount % 100 === 0) {
+                console.error('Detection error:', errorMsg);
+            }
             this.modelError.next(errorMsg);
             throw error;
         }
+    }
+
+    /**
+     * Get available detection classes from COCO-SSD model
+     */
+    getAvailableClasses(): string[] {
+        return [
+            'person', 'bicycle', 'car', 'motorbike', 'aeroplane', 'bus', 'train', 'truck',
+            'boat', 'traffic light', 'fire hydrant', 'stop sign', 'parking meter', 'bench',
+            'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe',
+            'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis',
+            'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard',
+            'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife',
+            'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange', 'broccoli', 'carrot',
+            'hot dog', 'pizza', 'donut', 'cake', 'chair', 'sofa', 'pottedplant', 'bed',
+            'diningtable', 'toilet', 'tvmonitor', 'laptop', 'mouse', 'remote', 'keyboard',
+            'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase',
+            'scissors', 'teddy bear', 'hair drier', 'toothbrush'
+        ];
+    }
+
+    /**
+     * Get human-readable label with confidence
+     */
+    formatDetectionLabel(detection: Detection): string {
+        return `${detection.class} (${(detection.score * 100).toFixed(0)}%)`;
     }
 
     /**
