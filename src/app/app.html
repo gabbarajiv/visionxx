@@ -1,0 +1,111 @@
+<div class="app-container">
+  <!-- Greeting Overlay -->
+  <div class="greeting-overlay" *ngIf="greetingMessage()">
+    <div class="greeting-box">
+      <h2 class="greeting-text">{{ greetingMessage() }}</h2>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <h1>🎥 The Desktop Sentinel</h1>
+      <p class="subtitle">Intelligent Entry Monitoring System</p>
+    </div>
+    <div class="header-actions">
+      <button class="nav-button" [class.active]="currentView() === 'dashboard'" (click)="switchView('dashboard')">
+        📊 Dashboard
+      </button>
+      <button class="nav-button" [class.active]="currentView() === 'settings'" (click)="switchView('settings')">
+        ⚙️ Settings
+      </button>
+    </div>
+  </header>
+
+  <!-- Dashboard View -->
+  <div *ngIf="currentView() === 'dashboard'" class="view">
+    <!-- Main content -->
+    <main class="app-main">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <h2>Dashboard</h2>
+          <ul class="menu">
+            <li class="menu-item active">
+              <span>📹 Live Feed</span>
+            </li>
+            <li class="menu-item">
+              <span>📊 Statistics</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Quick Stats</h3>
+          <div class="stats-card">
+            <div class="stat">
+              <span class="stat-label">Today's Arrivals</span>
+              <span class="stat-value">—</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Last Arrival</span>
+              <span class="stat-value">—</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Content Area -->
+      <section class="content">
+        <div class="content-header">
+          <h2>Live Camera Feed</h2>
+          <div class="status-bar">
+            <span class="status-item">Status: <strong>Ready</strong></span>
+          </div>
+        </div>
+
+        <!-- Camera Feed Component -->
+        <app-camera-feed></app-camera-feed>
+
+        <!-- Detection Viewer Component -->
+        <app-detection-viewer></app-detection-viewer>
+
+        <!-- Arrival Log Viewer Component -->
+        <app-arrival-log-viewer></app-arrival-log-viewer>
+
+        <!-- Info Cards -->
+        <div class="info-section">
+          <div class="info-card">
+            <h3>🎯 How It Works</h3>
+            <p>
+              The system monitors your entry door using computer vision. It identifies you and logs your arrival time
+              while filtering out false positives from your pets.
+            </p>
+          </div>
+
+          <div class="info-card">
+            <h3>📝 Features Enabled</h3>
+            <ol>
+              <li>Real-time camera monitoring</li>
+              <li>Person detection and logging</li>
+              <li>Routine pattern learning</li>
+              <li>Personalized greetings</li>
+              <li>Face recognition calibration</li>
+              <li>Audio configuration</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Settings View -->
+  <div *ngIf="currentView() === 'settings'" class="view">
+    <app-settings></app-settings>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <p>&copy; 2026 Desktop Sentinel | Phases 1-6 Complete | Status: Production Ready</p>
+  </footer>
+</div>

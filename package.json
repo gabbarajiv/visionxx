@@ -1,0 +1,104 @@
+{
+    "name": "sentry-bot",
+    "version": "0.0.0",
+    "main": "dist/electron/main.js",
+    "scripts": {
+        "start:electron": "electron .",
+        "build": "ng build && npm run build:electron",
+        "electron": "wait-on http://localhost:4200 && electron .",
+        "ng": "ng",
+        "start": "concurrently \\\"npm run start:ng\\\" \\\"wait-on http://localhost:4200 && npm run electron\\\"",
+        "watch": "ng build --watch --configuration development",
+        "start:ng": "ng serve",
+        "test": "ng test",
+        "build:electron": "tsc --project tsconfig.electron.json",
+        "dist": "npm run build && electron-builder"
+    },
+    "prettier": {
+        "printWidth": 100,
+        "singleQuote": true,
+        "overrides": [
+            {
+                "files": "*.html",
+                "options": {
+                    "parser": "angular"
+                }
+            }
+        ]
+    },
+    "private": true,
+    "dependencies": {
+        "@angular/common": "^20.3.0",
+        "@angular/compiler": "^20.3.0",
+        "@angular/core": "^20.3.0",
+        "@angular/forms": "^20.3.0",
+        "@angular/platform-browser": "^20.3.0",
+        "@angular/router": "^20.3.0",
+        "@tensorflow-models/coco-ssd": "^2.2.3",
+        "@tensorflow/tfjs": "^4.22.0",
+        "auto-launch": "^5.0.5",
+        "face-api.js": "^0.22.2",
+        "lowdb": "^7.0.1",
+        "rxjs": "~7.8.0",
+        "tslib": "^2.3.0",
+        "zone.js": "~0.15.0"
+    },
+    "devDependencies": {
+        "@angular/build": "^20.3.3",
+        "@angular/cli": "^20.3.3",
+        "@angular/compiler-cli": "^20.3.0",
+        "@electron/rebuild": "^4.0.3",
+        "@types/electron": "^1.6.12",
+        "@types/glob": "^9.0.0",
+        "@types/jasmine": "~5.1.0",
+        "@types/node": "^25.0.10",
+        "concurrently": "^9.2.1",
+        "electron": "^40.0.0",
+        "electron-builder": "^24.6.4",
+        "electron-forge": "^5.2.4",
+        "electron-is-dev": "^3.0.1",
+        "jasmine-core": "~5.9.0",
+        "karma": "~6.4.0",
+        "karma-chrome-launcher": "~3.2.0",
+        "karma-coverage": "~2.2.0",
+        "karma-jasmine": "~5.1.0",
+        "karma-jasmine-html-reporter": "~2.1.0",
+        "typescript": "~5.9.2",
+        "wait-on": "^9.0.3"
+    },
+    "build": {
+        "appId": "com.sentrybot.app",
+        "productName": "Sentry Bot",
+        "directories": {
+            "buildResources": "public",
+            "output": "dist"
+        },
+        "files": [
+            "dist/**/*",
+            "node_modules/**/*",
+            "package.json"
+        ],
+        "win": {
+            "target": [
+                {
+                    "target": "nsis",
+                    "arch": [
+                        "x64"
+                    ]
+                },
+                {
+                    "target": "portable",
+                    "arch": [
+                        "x64"
+                    ]
+                }
+            ]
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true
+        }
+    }
+}

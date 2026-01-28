@@ -1,0 +1,37 @@
+<div class="audio-settings-container">
+    <div class="settings-section">
+        <h3>Audio Settings</h3>
+
+        <div class="setting-item">
+            <label for="volume">Volume</label>
+            <input id="volume" type="range" min="0" max="1" step="0.1" [(ngModel)]="volume"
+                (change)="updateVolume(volume)" class="slider" />
+            <span class="value">{{ (volume * 100).toFixed(0) }}%</span>
+        </div>
+
+        <div class="setting-item">
+            <label>
+                <input type="checkbox" [(ngModel)]="greetingEnabled" (change)="toggleGreeting()" />
+                Enable Greetings
+            </label>
+        </div>
+
+        <div class="setting-item" *ngIf="availableVoices.length > 0">
+            <label for="voice">Voice</label>
+            <select id="voice" [(ngModel)]="selectedVoiceIndex" class="select">
+                <option *ngFor="let voice of availableVoices; let i = index" [value]="i">
+                    {{ voice.name }} ({{ voice.lang }})
+                </option>
+            </select>
+        </div>
+
+        <div class="button-group">
+            <button (click)="testGreeting()" class="btn btn-primary">
+                Test Greeting
+            </button>
+            <button (click)="stopAudio()" class="btn btn-secondary">
+                Stop Audio
+            </button>
+        </div>
+    </div>
+</div>

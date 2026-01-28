@@ -1,0 +1,136 @@
+.detection-viewer {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.canvas-container {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    background-color: #000;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.detection-canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: 2px solid #00ff00;
+}
+
+.controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background-color: #00ff00;
+    color: #000;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #00dd00;
+}
+
+.btn-secondary {
+    background-color: #ff4444;
+    color: #fff;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: #dd3333;
+}
+
+.stats-panel {
+    background-color: #2d2d2d;
+    padding: 12px;
+    border-radius: 4px;
+    border-left: 4px solid #00ff00;
+}
+
+.stats-panel h3 {
+    margin: 0 0 12px 0;
+    color: #00ff00;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 12px;
+    color: #ccc;
+}
+
+.stat-row .label {
+    font-weight: 600;
+}
+
+.stat-row .value {
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+}
+
+.stat-row .value.running {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+.model-info {
+    background-color: #2d2d2d;
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.model-info p {
+    margin: 4px 0;
+}
+
+.success {
+    color: #00ff00;
+}
+
+.pending {
+    color: #ffaa00;
+}
+
+.error {
+    color: #ff4444;
+}

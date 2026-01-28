@@ -1,0 +1,53 @@
+<div class="detection-viewer">
+    <div class="canvas-container">
+        <canvas #canvas class="detection-canvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <button (click)="startDetection()" [disabled]="isRunning" class="btn btn-primary">
+            Start Detection
+        </button>
+        <button (click)="stopDetection()" [disabled]="!isRunning" class="btn btn-secondary">
+            Stop Detection
+        </button>
+    </div>
+
+    <div class="stats-panel" *ngIf="detectionStats">
+        <h3>Detection Stats</h3>
+        <div class="stat-row">
+            <span class="label">Total Objects:</span>
+            <span class="value">{{ stats.totalDetections }}</span>
+        </div>
+        <div class="stat-row">
+            <span class="label">People Detected:</span>
+            <span class="value">{{ stats.personDetections }}</span>
+        </div>
+        <div class="stat-row">
+            <span class="label">Highest Confidence:</span>
+            <span class="value">{{ (stats.highestConfidence * 100).toFixed(1) }}%</span>
+        </div>
+        <div class="stat-row">
+            <span class="label">Frame Number:</span>
+            <span class="value">{{ stats.frameNumber }}</span>
+        </div>
+        <div class="stat-row">
+            <span class="label">Status:</span>
+            <span class="value" [class.running]="isRunning">
+                {{ isRunning ? 'Running' : 'Stopped' }}
+            </span>
+        </div>
+    </div>
+
+    <div class="model-info">
+        <div *ngIf="modelLoaded$ | async; then loaded; else loading"></div>
+        <ng-template #loaded>
+            <p class="success">✓ COCO-SSD Model Ready</p>
+        </ng-template>
+        <ng-template #loading>
+            <p class="pending">⏳ Loading COCO-SSD Model...</p>
+        </ng-template>
+        <p class="error" *ngIf="modelError$ | async as error">
+            ✗ Error: {{ error }}
+        </p>
+    </div>
+</div>

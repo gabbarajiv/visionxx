@@ -1,0 +1,109 @@
+<div class="settings-container">
+    <div class="settings-header">
+        <h2>Settings</h2>
+        <div class="saved-message" *ngIf="savedMessage">
+            ✓ {{ savedMessage }}
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-button" [class.active]="activeTab === 'general'" (click)="switchTab('general')">
+            General
+        </button>
+        <button class="tab-button" [class.active]="activeTab === 'audio'" (click)="switchTab('audio')">
+            Audio
+        </button>
+        <button class="tab-button" [class.active]="activeTab === 'face'" (click)="switchTab('face')">
+            Face Recognition
+        </button>
+        <button class="tab-button" [class.active]="activeTab === 'data'" (click)="switchTab('data')">
+            Data
+        </button>
+    </div>
+
+    <div class="tab-content">
+        <!-- General Settings -->
+        <div class="tab-pane" *ngIf="activeTab === 'general' && settings">
+            <div class="settings-section">
+                <h3>General Settings</h3>
+
+                <div class="setting-item">
+                    <label for="detectionModel">Detection Model</label>
+                    <select id="detectionModel" [(ngModel)]="settings.detectionModel" (change)="updateSettings()"
+                        class="select">
+                        <option *ngFor="let model of detectionModels" [value]="model">
+                            {{ model }}
+                        </option>
+                    </select>
+                    <small>Choose the AI model for person detection</small>
+                </div>
+
+                <div class="setting-item">
+                    <label for="minConfidence">Minimum Confidence</label>
+                    <div class="slider-group">
+                        <input id="minConfidence" type="range" min="0.5" max="0.99" step="0.05"
+                            [(ngModel)]="settings.minConfidence" (change)="updateMinConfidence(settings.minConfidence)"
+                            class="slider" />
+                        <span class="value">{{ (settings.minConfidence * 100).toFixed(0) }}%</span>
+                    </div>
+                    <small>Only log detections above this confidence threshold</small>
+                </div>
+
+                <div class="setting-item">
+                    <label for="timezone">Timezone</label>
+                    <select id="timezone" [(ngModel)]="settings.timezone" (change)="updateSettings()" class="select">
+                        <option *ngFor="let tz of timezones" [value]="tz">
+                            {{ tz }}
+                        </option>
+                    </select>
+                    <small>Used for arrival time calculations</small>
+                </div>
+
+                <div class="setting-item">
+                    <label for="webcamId">Webcam</label>
+                    <input id="webcamId" type="text" [(ngModel)]="settings.webcamId" (change)="updateSettings()"
+                        class="input" placeholder="default" />
+                    <small>Camera device ID (usually 'default')</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio Settings -->
+        <div class="tab-pane" *ngIf="activeTab === 'audio'">
+            <app-audio-settings></app-audio-settings>
+        </div>
+
+        <!-- Face Recognition -->
+        <div class="tab-pane" *ngIf="activeTab === 'face'">
+            <app-face-calibration></app-face-calibration>
+        </div>
+
+        <!-- Data Management -->
+        <div class="tab-pane" *ngIf="activeTab === 'data'">
+            <div class="settings-section">
+                <h3>Data Management</h3>
+
+                <div class="data-info">
+                    <p>Manage your application data</p>
+                </div>
+
+                <div class="button-group">
+                    <button (click)="exportSettings()" class="btn btn-primary">
+                        📥 Export Data
+                    </button>
+                    <button (click)="clearAllData()" class="btn btn-danger">
+                        🗑️ Clear All Data
+                    </button>
+                </div>
+
+                <div class="warning-box">
+                    <h4>⚠️ Warning</h4>
+                    <p>
+                        Clearing all data will delete all arrival logs, routine patterns, and settings.
+                        This cannot be undone.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

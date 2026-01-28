@@ -1,0 +1,55 @@
+<div class="camera-feed-container">
+    <div class="camera-section">
+        <div class="video-wrapper">
+            <video #videoElement autoplay playsinline class="video-element"
+                [class.disabled]="!currentState?.isActive"></video>
+
+            <!-- Loading indicator -->
+            <div *ngIf="isLoading" class="loading-overlay">
+                <div class="spinner"></div>
+                <p>Initializing camera...</p>
+            </div>
+
+            <!-- Error display -->
+            <div *ngIf="hasError" class="error-overlay">
+                <div class="error-message">
+                    <h3>Camera Error</h3>
+                    <p>{{ errorMessage }}</p>
+                    <button (click)="startCamera()" class="btn btn-retry">
+                        Retry
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="camera-controls">
+            <div class="control-group">
+                <label for="device-select">Camera Device:</label>
+                <select id="device-select" [(ngModel)]="selectedDeviceId" (change)="switchCamera(selectedDeviceId)"
+                    [disabled]="availableDevices.length === 0" class="device-select">
+                    <option *ngFor="let device of availableDevices" [value]="device.deviceId">
+                        {{ device.label || 'Camera ' + (availableDevices.indexOf(device) + 1) }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button *ngIf="currentState?.isActive" (click)="stopCamera()" class="btn btn-danger">
+                    Stop Camera
+                </button>
+                <button *ngIf="!currentState?.isActive && !hasError" (click)="startCamera()" class="btn btn-primary">
+                    Start Camera
+                </button>
+            </div>
+        </div>
+
+        <!-- Status indicator -->
+        <div class="status-indicator">
+            <span class="status-dot" [class.active]="currentState?.isActive" [class.error]="hasError"></span>
+            <span class="status-text">
+                {{ currentState?.isActive ? 'Camera Active' : 'Camera Inactive' }}
+            </span>
+        </div>
+    </div>
+</div>

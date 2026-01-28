@@ -1,0 +1,184 @@
+<div class="arrival-log-viewer">
+    <div class="header">
+        <h2>Arrival Log</h2>
+        <div class="tabs">
+            <button [class.active]="selectedTab === 'log'" (click)="selectedTab = 'log'" class="tab">
+                Recent Arrivals
+            </button>
+            <button [class.active]="selectedTab === 'stats'" (click)="selectedTab = 'stats'" class="tab">
+                Statistics
+            </button>
+            <button [class.active]="selectedTab === 'routine'" (click)="selectedTab = 'routine'" class="tab">
+                Routine Analysis
+            </button>
+        </div>
+    </div>
+
+    <!-- Recent Arrivals Tab -->
+    <div class="tab-content" *ngIf="selectedTab === 'log'">
+        <div class="arrivals-table" *ngIf="recentArrivals.length > 0; else noArrivals">
+            <div class="table-header">
+                <div class="col col-date">Date</div>
+                <div class="col col-time">Time</div>
+                <div class="col col-day">Day</div>
+                <div class="col col-confidence">Confidence</div>
+                <div class="col col-model">Model</div>
+            </div>
+
+            <div class="table-row" *ngFor="let arrival of recentArrivals"
+                [style.border-left-color]="getConfidenceColor(arrival.confidence)">
+                <div class="col col-date">{{ formatDate(arrival.date) }}</div>
+                <div class="col col-time">{{ formatTime(arrival.time) }}</div>
+                <div class="col col-day">{{ arrival.day }}</div>
+                <div class="col col-confidence">
+                    <span class="confidence-badge">
+                        {{ (arrival.confidence * 100).toFixed(1) }}%
+                    </span>
+                </div>
+                <div class="col col-model">{{ arrival.model }}</div>
+            </div>
+        </div>
+
+        <ng-template #noArrivals>
+            <div class="empty-state">
+                <p>No arrivals logged yet. Start detection to begin recording.</p>
+            </div>
+        </ng-template>
+
+        <div class="actions" *ngIf="arrivals.length > 0">
+            <button class="btn-clear" (click)="clearLogs()">Clear All Logs</button>
+        </div>
+    </div>
+
+    <!-- Statistics Tab -->
+    <div class="tab-content" *ngIf="selectedTab === 'stats'" [ngSwitch]="statistics?.totalArrivals">
+        <div *ngSwitchDefault class="stats-container">
+            <div class="stat-card">
+                <div class="stat-value">{{ statistics?.totalArrivals || 0 }}</div>
+                <div class="stat-label">Total Arrivals</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-value">
+                    {{ statistics?.averageConfidence ? (statistics.averageConfidence * 100).toFixed(1) : '0' }}%
+                </div>
+                <div class="stat-label">Avg. Confidence</div>
+            </div>
+
+            <div class="stat-card" *ngIf="statistics?.lastArrival">
+                <div class="stat-value">{{ statistics.lastArrival.time }}</div>
+                <div class="stat-label">Last Arrival</div>
+            </div>
+        </div>
+
+        <!-- Arrivals by Day of Week -->
+        <div class="by-day-container" *ngIf="statistics?.arrivalsByDay">
+            <h3>Arrivals by Day of Week</h3>
+            <div class="day-stats">
+                <div class="day-stat"
+                    *ngFor="let day of ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']">
+                    <div class="day-name">{{ day.substring(0, 3) }}</div>
+                    <div class="day-info">
+                        <div class="count">{{ statistics.arrivalsByDay[day]?.count || 0 }}</div>
+                        <div class="avg-time">{{ statistics.arrivalsByDay[day]?.avgTime || '--:--' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <ng-template #noStats>
+            <div class="empty-state">
+                <p>No arrival data yet. Start detection to begin recording.</p>
+            </div>
+        </ng-template>
+    </div>
+
+    <!-- Routine Analysis Tab -->
+    <div class="tab-content" *ngIf="selectedTab === 'routine'">
+        <div *ngIf="arrivals.length >= 3; else needMoreData">
+            <!-- Overall Routine Summary -->
+            <div class="routine-summary" *ngIf="routine; else noRoutine">
+                <div class="prediction-card">
+                    <div class="card-title">📊 Your Routine Pattern</div>
+                    <div class="routine-stats">
+                        <div class="routine-stat">
+                            <div class="stat-label">Mean Arrival Time</div>
+                            <div class="stat-value">{{ routine.meanArrivalTime }}</div>
+                        </div>
+                        <div class="routine-stat">
+                            <div class="stat-label">Arrival Window</div>
+                            <div class="stat-value">{{ routine.windowStart }} - {{ routine.windowEnd }}</div>
+                        </div>
+                        <div class="routine-stat">
+                            <div class="stat-label">Std Deviation</div>
+                            <div class="stat-value">{{ routine.standardDeviation }} min</div>
+                        </div>
+                        <div class="routine-stat">
+                            <div class="stat-label">Confidence</div>
+                            <div class="stat-value confidence-pct"
+                                [style.color]="getConfidenceColor(routine.confidence)">
+                                {{ (routine.confidence * 100).toFixed(0) }}%
+                            </div>
+                        </div>
+                        <div class="routine-stat">
+                            <div class="stat-label">Sample Size</div>
+                            <div class="stat-value">{{ routine.sampleSize }} arrivals</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Arrival Prediction -->
+                <div class="prediction-card" *ngIf="nextPredictedArrival">
+                    <div class="card-title">⏰ Next Arrival Prediction</div>
+                    <div class="next-arrival">
+                        <div class="predicted-time">{{ nextPredictedArrival.time }}</div>
+                        <div class="in-window" [class.active]="isInWindow()">
+                            <span *ngIf="isInWindow()">✓ Currently in predicted window</span>
+                            <span *ngIf="!isInWindow()">Expected in {{ nextPredictedArrival.hoursAway }} hours</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <ng-template #noRoutine>
+                <div class="empty-state">
+                    <p>Click "Analyze Routine" to calculate patterns from arrival data.</p>
+                </div>
+            </ng-template>
+
+            <!-- Day-by-Day Analysis -->
+            <div class="routine-by-day">
+                <h3>Routine by Day of Week</h3>
+                <div class="day-routine-grid">
+                    <div class="day-routine-card"
+                        *ngFor="let day of ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']"
+                        [class.has-data]="routineByDay[day]">
+                        <div class="day-label">{{ day.substring(0, 3) }}</div>
+                        <div class="day-routine" *ngIf="routineByDay[day]; else noDay">
+                            <div class="time">{{ routineByDay[day]!.meanArrivalTime }}</div>
+                            <div class="window">{{ routineByDay[day]!.windowStart }}-{{ routineByDay[day]!.windowEnd }}
+                            </div>
+                            <div class="count">{{ routineByDay[day]!.sampleSize }} arrivals</div>
+                        </div>
+                        <ng-template #noDay>
+                            <div class="no-data">No data</div>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="routine-actions">
+                <button class="btn-primary" (click)="analyzeRoutine()">🔄 Analyze Routine Now</button>
+                <button class="btn-danger" (click)="clearAnalysis()">Clear Analysis</button>
+            </div>
+        </div>
+
+        <ng-template #needMoreData>
+            <div class="empty-state">
+                <p>You need at least 3 arrival records to analyze your routine. Keep detection running!</p>
+                <p style="font-size: 0.9em; color: #888;">Currently have {{ arrivals.length }} arrivals</p>
+            </div>
+        </ng-template>
+    </div>
+</div>

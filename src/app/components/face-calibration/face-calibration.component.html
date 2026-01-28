@@ -1,0 +1,57 @@
+<div class="face-calibration-container">
+    <div class="calibration-section">
+        <h3>Face Recognition Calibration</h3>
+
+        <div class="status" [ngClass]="{ 'calibrated': isCalibrated, 'not-calibrated': !isCalibrated }">
+            <span *ngIf="isCalibrated" class="status-badge success">✓ Calibrated</span>
+            <span *ngIf="!isCalibrated" class="status-badge warning">⚠ Not Calibrated</span>
+            <p *ngIf="isCalibrated">Your face profile has been saved. The system will use this to filter out false
+                positives.</p>
+            <p *ngIf="!isCalibrated">Calibration helps the system recognize you and filter out your pets.</p>
+        </div>
+
+        <div class="video-section">
+            <video #videoElement autoplay playsinline class="video-element"></video>
+            <canvas #canvasElement style="display: none;"></canvas>
+        </div>
+
+        <div class="progress-section" *ngIf="isCalibrating">
+            <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="calibrationProgress * 100"></div>
+            </div>
+            <p class="progress-text">Calibrating: {{ (calibrationProgress * 100).toFixed(0) }}%</p>
+        </div>
+
+        <div class="message-section">
+            <div class="error-message" *ngIf="errorMessage">
+                ❌ {{ errorMessage }}
+            </div>
+            <div class="success-message" *ngIf="successMessage">
+                ✓ {{ successMessage }}
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button (click)="startCalibration()" [disabled]="isCalibrating" class="btn btn-primary">
+                {{ isCalibrating ? 'Calibrating...' : 'Start Calibration' }}
+            </button>
+            <button (click)="captureFrame()" [disabled]="isCalibrating" class="btn btn-secondary">
+                Capture Frame
+            </button>
+            <button *ngIf="isCalibrated" (click)="resetCalibration()" class="btn btn-danger">
+                Reset Calibration
+            </button>
+        </div>
+
+        <div class="instructions">
+            <h4>Instructions:</h4>
+            <ol>
+                <li>Ensure good lighting on your face</li>
+                <li>Look directly at the camera</li>
+                <li>Click "Start Calibration" to capture 5 samples of your face</li>
+                <li>Keep your face in the camera frame during calibration</li>
+                <li>The system will use this profile to recognize you and filter pets</li>
+            </ol>
+        </div>
+    </div>
+</div>
